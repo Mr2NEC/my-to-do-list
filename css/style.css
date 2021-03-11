@@ -1,8 +1,4 @@
-*::after,
-*::before,
-* {
-    box-sizing: border-box;
-}
+
 body {
     font-style: normal;
     font-weight: 400;
@@ -88,33 +84,148 @@ body {
     left: 50%;
     top: 0;
     transform: translate(-50%, -50%) rotate(45deg);
-    background: #88eaa9;
+    background-color: #88eaa9;
     border-radius: 11px;
 }
 
 .to-do-list-decor-item::after {
-    content: "+";
+    content: "";
+    width: 30px;
+    height: 30px;
     position: absolute;
     left: 50%;
     top: 0;
     transform: translate(-50%, -50%);
-    font-size: 40px;
-    color: #ffffff;
+    background-image: url('../svg/plus.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+ 
+.to-do-list-content-body {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+}
+
+.to-do-list-content-item{
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+    padding: 10px;
+    border-bottom: 1px solid #C7C7C7;
+}
+
+.to-do-list-task-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+label,
+input[type="checkbox"] + time,
+input[type="checkbox"] + time::before {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 12px;
+    line-height: 16px;
+    color: #889DEA;
+}
+
+input[type="checkbox"] {
+    opacity: 0;
+    position: absolute;
+    cursor: pointer;
+}
+
+input[type="checkbox"] + time::before {
+    content: "";
+    width: 18px;
+    height: 18px;
+    margin: 0 4px 0 0;
+    border: solid 1px #889DEA;
+    line-height: 14px;
     text-align: center;
+    background: #ffffff;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+}
+
+input[type="checkbox"]:checked + time::before {
+    content: "";
+    background-color: #889DEA;
+    background-image: url('../svg/done.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    width: 18px;
+    height: 18px;
+}
+
+.to-do-list-task-icon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+.to-do-list-task-icon-done {
+  background-image: url('../svg/done.svg');
+}
+
+.to-do-list-task-icon-pencil {
+  background-image: url('../svg/pencil.svg');
+}
+
+.to-do-list-task-icon-delete {
+  background-image: url('../svg/delete.svg');
+}
+
+.to-do-list-task-icon-filter {
+filter: invert(57%) sepia(71%) saturate(554%) hue-rotate(195deg) brightness(101%) contrast(83%);
+}
+
+.to-do-list-task-content {
+    width: 100%;
+    min-height: 100%;
+    outline:none;
+    border: none;
+    font-size: 14px;
+    line-height: 22px;
+    color: #3F3F3F;
+    text-decoration:line-through;
 }
 
 .to-do-list-add-task-btn {
     width: 100%;
     max-width: 208px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background: #88eaa9;
     color: #ffffff;
     padding: 12px 16px;
     font-weight: 600;
     font-size: 16px;
     line-height: 24px;
-    text-align: center;
     border-radius: 11px;
 }
+
+.to-do-list-add-task-btn-text::before {
+    content: "";
+    margin-right: 10px;
+    padding: 0 10px;
+    background-image: url('../svg/plus.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
 #footer {
     display: flex;
     justify-content: center;
