@@ -2,8 +2,8 @@
 body {
     font-style: normal;
     font-weight: 400;
-    font-size: 24px;
-    line-height: 32px;
+    font-size: 14px;
+    line-height: 22px;
     background: #ffffff;
     font-family: "Poppins", sans-serif;
 }
@@ -24,8 +24,11 @@ body {
     padding: 10px;
     border-radius: 0 0 50px 0;
 }
-#header > span {
+h1 {
     font-weight: 900;
+    font-size: 24px;
+    line-height: 32px;
+    margin: 10px 0;
 }
 
 .to-do-list-info {
@@ -35,13 +38,12 @@ body {
     align-items: flex-start;
     list-style-type: none;
     padding: 0 50px;
-    margin: 50px 0;
+    margin: 40px 0;
 }
 
 .to-do-list-info div {
     display: flex;
     flex-direction: column;
-    font-weight: normal;
     font-size: 12px;
     line-height: 16px;
 }
@@ -107,7 +109,7 @@ body {
     width: 100%;
     flex-direction: column;
     align-items: center;
-    cursor: pointer;
+    margin: 25px 0;
 }
 
 .to-do-list-content-item{
@@ -116,6 +118,7 @@ body {
     width: 60%;
     padding: 10px;
     border-bottom: 1px solid #C7C7C7;
+    cursor: pointer;
 }
 
 .to-do-list-task-header{
@@ -192,11 +195,8 @@ filter: invert(57%) sepia(71%) saturate(554%) hue-rotate(195deg) brightness(101%
 
 .to-do-list-task-content {
     width: 100%;
-    min-height: 100%;
     outline:none;
     border: none;
-    font-size: 14px;
-    line-height: 22px;
     color: #3F3F3F;
     text-decoration:line-through;
 }
