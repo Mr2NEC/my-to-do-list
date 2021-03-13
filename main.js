@@ -1,112 +1,132 @@
-class myToDoList {
-    constructor() {
-        this.toDoArr = new Map();
-        this.scope = document.querySelector(".to-do-list-info-scope");
-        this.active = document.querySelector(".to-do-list-info-active");
-        this.successful = document.querySelector(".to-do-list-info-successful");
+const TODOBODY = document.querySelector(".to-do-list-content-body")
+
+class TodoBody {
+    constructor(body) {
+        this.body = body
+        body.onclick = this.onClick.bind( this )
+        this.ls = localStorage.myMap?JSON.parse(localStorage.myMap):null
+        this.todosList = this.ls ? new Map(this.ls): new Map()
     }
 
-    createToDo() {
-        const dateNow = new Date();
-        const id = Math.round(dateNow.getTime() / 1000);
-        const textDate = dateNow
-            .toLocaleDateString("en-GB", {
-                day: "numeric",
-                month: "short",
-                year: "numeric",
-            })
-            .split(" ")
-            .join(" ");
-        this.toDoArr.set(id, {
-            text: "",
-            textDate,
-            done: false,
-        });
-        return {
-            id,
-            text: "",
-            textDate,
-            done: false,
-        };
+    textDate ( date ) {
+      const newDate = new Date(date * 1000);
+      return  newDate.toLocaleDateString( "en-GB", {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+        } )
+            .split( " " )
+            .join( " " );
     }
 
-    set addToDo({ id, text, textDate, done }) {
-        const toDoBody = document.querySelector(".to-do-list-content-body");
+    createId ( ) {
+       const date =  new Date()
+       return Math.round(date.getTime() / 1000);
+    }
 
-        toDoBody.innerHTML =
+    getFormattedDate ( date ) {
+        const newDate = new Date( date * 1000 );
+       return newDate.toISOString().substring(0, 10);
+    }
+
+    createTodo ( {id = this.createId().toString(), text = "", done = false} ) {
+        this.todosList.set( id, { text: text, done: done } )
+        if(this.ls !== this.todosList) localStorage.myMap = JSON.stringify(Array.from(this.todosList))
+        this.body.innerHTML =
             `<div class="to-do-list-content-item" id=${id}>
                         <div class="to-do-list-task-header">
                             <label
-                                ><input type="checkbox" ${
+                                ><input type="checkbox" data-id=${id} ${
                                     done ? "checked" : ""
                                 } /><time
-                                    datetime="2021-01-03"
-                                    >${textDate}</time
+                                    datetime="${this.getFormattedDate(Number(id))}"
+                                    >${this.textDate(Number(id))}</time
                                 ></label
                             >
                             <div class="to-do-list-task-svg">
                                 <span
-                                    class="to-do-list-task-icon to-do-list-task-icon-done to-do-list-task-icon-filter"
+                                    data-id=${id}
+                                    data-action="updateTodoOn"
                                 ></span>
-                                <span
-                                    class="to-do-list-task-icon to-do-list-task-icon-pencil to-do-list-task-icon-filter"
-                                ></span>
-                                <span
-                                    class="to-do-list-task-icon to-do-list-task-icon-delete"
+                                <span data-id=${id} data-action="deleteTodo"
                                 ></span>
                             </div>
                         </div>
-                        <div class="to-do-list-task-body">
-                            <div
-                                class="to-do-list-task-content"
-                                contenteditable="true"
-                            >
-                            ${text}
-                            </div>
-                        </div>
-                    </div>` + toDoBody.innerHTML;
+                            <div data-id=${id} contentEditable=false data-ph="Enter your task">${text}</div>
+                    </div>` + this.body.innerHTML;
+        this.updateScope();
+        this.updateActive();
     }
 
-    updateScope() {
-        this.scope.innerText = this.toDoArr.size;
+    deleteTodo ( {id} ) {
+        const todoElem = document.getElementById(id)
+        todoElem.remove();
+        this.todosList.delete( id );
+        this.updateScope();
+        this.updateActive();
+        this.updateSuccessful();
     }
 
-    updateActive() {
+    updateTodoOn( {elem, id} ) { 
+        const todoElem = document.getElementById( id ).querySelector( '[data-ph="Enter your task"]' )
+        elem.dataset.action = "updateTodoOff"
+        todoElem.setAttribute( 'contentEditable', 'true' )
+        todoElem.focus()
+    }
+
+    updateTodoOff( {elem, id} ) {
+        const todoElem = document.getElementById( id ).querySelector( '[data-ph="Enter your task"]' )
+        elem.dataset.action = "updateTodoOn"
+        this.todosList.get(id).text= todoElem.innerText
+        console.log(this.todosList);
+        todoElem.setAttribute( 'contentEditable', 'false' )
+    }
+
+    updateScope () {
+        const scope = document.querySelector(".to-do-list-info-scope");
+        scope.innerText = this.todosList.size;
+    }
+
+    updateActive () {
+        const active = document.querySelector(".to-do-list-info-active");
         let count = 0;
-        for (let todo of this.toDoArr.values()) {
+        for (let todo of this.todosList.values()) {
             if (!todo.done) {
                 count++;
             }
         }
-        this.active.innerText = count;
+        active.innerText = count;
     }
 
-    updateSuccessful() {
+    updateSuccessful () {
+        const successful = document.querySelector(".to-do-list-info-successful");
         let count = 0;
-        for (let todo of this.toDoArr.values()) {
+        for (let todo of this.todosList.values()) {
             if (todo.done) {
                 count++;
             }
         }
-        this.successful.innerText = count;
+        successful.innerText = count;
     }
 
-    toDoInit() {
+    toDoInit () {
+        if ( this.todosList.size !== 0 ) {
+            for (let todo of this.todosList) { 
+               this.createTodo({id:todo[0],text: todo[0].text, done: todo[0].done}) 
+            }
+        }
         this.updateActive();
         this.updateScope();
         this.updateSuccessful();
     }
+    
+    onClick ( event ) { 
+        const action = event.target.dataset.action;
+        const id= event.target.dataset.id
+      if (action) {
+        this[action]({elem :event.target, id});
+      }
+    };
 }
-let myTodo = new myToDoList();
-myTodo.toDoInit();
 
-const toDoBtn = document.querySelector(".to-do-list-add-task-btn");
-
-toDoBtn.addEventListener("click", () => {
-    let newTodo = myTodo.createToDo();
-    console.log(newTodo);
-    myTodo.addToDo = newTodo;
-    myTodo.updateActive();
-    myTodo.updateScope();
-    myTodo.updateSuccessful();
-});
+new TodoBody(TODOBODY).toDoInit()

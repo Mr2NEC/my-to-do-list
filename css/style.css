@@ -168,7 +168,9 @@ input[type="checkbox"]:checked + time::before {
     height: 18px;
 }
 
-.to-do-list-task-icon {
+[data-action="updateTodoOn"],
+[data-action="updateTodoOff"],
+[data-action="deleteTodo"] {
     display: inline-block;
     width: 20px;
     height: 20px;
@@ -177,36 +179,43 @@ input[type="checkbox"]:checked + time::before {
     background-size: contain;
 }
 
-.to-do-list-task-icon-done {
+[data-action="updateTodoOff"] {
   background-image: url('../svg/done.svg');
+  filter: invert(57%) sepia(71%) saturate(554%) hue-rotate(195deg) brightness(101%) contrast(83%);
 }
 
-.to-do-list-task-icon-pencil {
+[data-action="updateTodoOn"] {
   background-image: url('../svg/pencil.svg');
 }
 
-.to-do-list-task-icon-delete {
-  background-image: url('../svg/delete.svg');
-}
-
-.to-do-list-task-icon-filter {
+[data-action="updateTodoOn"]:hover {
 filter: invert(57%) sepia(71%) saturate(554%) hue-rotate(195deg) brightness(101%) contrast(83%);
 }
 
-.to-do-list-task-content {
+[data-action="deleteTodo"] {
+  background-image: url('../svg/delete.svg');
+}
+
+[data-ph="Enter your task"] {
     width: 100%;
     outline:none;
     border: none;
+    margin: 10px 0;
+    padding: 0 10px;
     color: #3F3F3F;
-    text-decoration:line-through;
 }
 
-.to-do-list-add-task-btn {
+[contentEditable=false]:empty:not(:focus):before{
+    content:attr(data-ph);
+    color: #797979;
+}
+
+[data-action="createTodo"] {
     width: 100%;
     max-width: 208px;
     display: flex;
-    justify-content: center;
     align-items: center;
+    text-align: center;
     background: #88eaa9;
     color: #ffffff;
     padding: 12px 16px;
@@ -214,12 +223,14 @@ filter: invert(57%) sepia(71%) saturate(554%) hue-rotate(195deg) brightness(101%
     font-size: 16px;
     line-height: 24px;
     border-radius: 11px;
+    margin: 10px 0;
 }
 
-.to-do-list-add-task-btn-text::before {
+[data-action="createTodo"]::before {
     content: "";
     margin-right: 10px;
-    padding: 0 10px;
+    width: 15px;
+    height: 15px;
     background-image: url('../svg/plus.svg');
     background-repeat: no-repeat;
     background-position: center;
