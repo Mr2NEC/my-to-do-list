@@ -236,6 +236,9 @@ filter: invert(57%) sepia(71%) saturate(554%) hue-rotate(195deg) brightness(101%
     background-position: center;
     background-size: contain;
 }
+.disabled{
+  pointer-events: none;
+}
 
 #footer {
     display: flex;

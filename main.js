@@ -69,6 +69,7 @@ class TodoBody {
 
     updateTodoOn( {elem, id} ) { 
         const todoElem = document.getElementById( id ).querySelector( '[data-ph="Enter your task"]' )
+        TODOBODY.querySelectorAll( '.to-do-list-content-item' ).forEach( function ( contentItem ) { if ( contentItem.id !== id ) contentItem.classList.add( "disabled" ) });
         elem.dataset.action = "updateTodoOff"
         todoElem.setAttribute( 'contentEditable', 'true' )
         todoElem.focus()
@@ -76,6 +77,7 @@ class TodoBody {
 
     updateTodoOff( {elem, id} ) {
         const todoElem = document.getElementById( id ).querySelector( '[data-ph="Enter your task"]' )
+        TODOBODY.querySelectorAll( '.disabled' ).forEach(function(contentItem){contentItem.classList.remove( "disabled" )})
         elem.dataset.action = "updateTodoOn"
         this.todosList.get(id).text= todoElem.innerText
         this.updateLocalStorage()
