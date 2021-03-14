@@ -36,6 +36,24 @@
                     <div class="to-do-list-decor-item"></div>
                 </div>
                 <div class="to-do-list-content-body">
+                    <template id="tmpl">
+                        <div class="to-do-list-content-item" >
+                        <div class="to-do-list-task-header">
+                            <label
+                                ><input type="checkbox" data-action="updateChecked" /><time
+                                    ></time
+                                ></label
+                            >
+                            <div class="to-do-list-task-svg">
+                                <span
+                                    data-action="updateTodoOn"
+                                ></span>
+                                <span  data-action="deleteTodo"
+                                ></span>
+                            </div>
+                        </div>
+                            <div  contentEditable=false data-ph="Enter your task"></div>
+                    </template>
                     <div data-action="createTodo">Create new task</div>
                 </div>
             </main>

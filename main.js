@@ -1,17 +1,15 @@
-const TODOBODY = document.querySelector(".to-do-list-content-body");
-
 class TodoBody {
     constructor(body) {
         this.body = body;
         body.onclick = this.onClick.bind(this);
-        this.todosList = localStorage.myMap
-            ? new Map(JSON.parse(localStorage.myMap))
+        this.ls = localStorage.getItem("myToDos")
+            ? new Map(JSON.parse(localStorage.getItem("myToDos")))
             : new Map();
+        this.todosList = this.ls.size !== 0 ? new Map(this.ls) : new Map();
     }
 
     textDate(date) {
-        const newDate = new Date(date * 1000);
-        return newDate
+        return date
             .toLocaleDateString("en-GB", {
                 day: "numeric",
                 month: "short",
@@ -22,41 +20,79 @@ class TodoBody {
     }
 
     createId() {
-        const date = new Date();
-        return Math.round(date.getTime() / 1000);
+        let newid = () => {
+            return Math.floor((1 + Math.random()) * 0x10000)
+                .toString(16)
+                .substring(1);
+        };
+        return (
+            newid() +
+            newid() +
+            "-" +
+            newid() +
+            "-" +
+            newid() +
+            newid() +
+            newid()
+        );
     }
 
     getFormattedDate(date) {
-        const newDate = new Date(date * 1000);
-        return newDate.toISOString().substring(0, 10);
+        return date.toISOString().substring(0, 10);
     }
 
-    createTodo({ id = this.createId().toString(), text = "", done = false }) {
+    createTemplate({ id, text, done, now }) {
+        const tmpl = document.querySelector("#tmpl");
+        const clon = tmpl.content.cloneNode(true);
+
+        clon.querySelector(".to-do-list-content-item").id = id;
+
+        const checkbox = clon.querySelector("[data-action=updateChecked]");
+        checkbox.dataset.id = id;
+        if (done) {
+            checkbox.className = "checked";
+        }
+
+        const time = clon.querySelector("time");
+        time.setAttribute("datetime", this.getFormattedDate(now));
+        time.textContent = this.textDate(now);
+
+        clon.querySelector("[data-action=updateTodoOn]").dataset.id = id;
+        clon.querySelector("[data-action=deleteTodo]").dataset.id = id;
+
+        const contentEditableDiv = clon.querySelector("[contentEditable]");
+        contentEditableDiv.dataset.id = id;
+        contentEditableDiv.textContent = text;
+
+        this.body.insertBefore(clon, this.body.firstElementChild);
+    }
+
+    createTodo({ id = this.createId(), text = "", done = false }) {
+        const now = new Date();
         this.todosList.set(id, { text, done });
-        this.body.innerHTML =
-            `<div class="to-do-list-content-item" id=${id}>
-                        <div class="to-do-list-task-header">
-                            <label
-                                ><input type="checkbox" data-id=${id} data-action="updateChecked" ${
-                done ? "checked" : ""
-            } /><time
-                                    datetime="${this.getFormattedDate(
-                                        Number(id)
-                                    )}"
-                                    >${this.textDate(Number(id))}</time
-                                ></label
-                            >
-                            <div class="to-do-list-task-svg">
-                                <span
-                                    data-id=${id}
-                                    data-action="updateTodoOn"
-                                ></span>
-                                <span data-id=${id} data-action="deleteTodo"
-                                ></span>
-                            </div>
-                        </div>
-                            <div data-id=${id} contentEditable=false data-ph="Enter your task">${text}</div>
-                    </div>` + this.body.innerHTML;
+        this.createTemplate({ id, text, done, now });
+        // this.body.innerHTML =
+        //     `<div class="to-do-list-content-item" id=${id}>
+        //                 <div class="to-do-list-task-header">
+        //                     <label
+        //                         ><input type="checkbox" data-id=${id} data-action="updateChecked" ${
+        //         done ? "checked" : ""
+        //     } /><time
+        //                             datetime="${this.getFormattedDate(now)}"
+        //                             >${this.textDate(now)}</time
+        //                         ></label
+        //                     >
+        //                     <div class="to-do-list-task-svg">
+        //                         <span
+        //                             data-id=${id}
+        //                             data-action="updateTodoOn"
+        //                         ></span>
+        //                         <span data-id=${id} data-action="deleteTodo"
+        //                         ></span>
+        //                     </div>
+        //                 </div>
+        //                     <div data-id=${id} contentEditable=false data-ph="Enter your task">${text}</div>
+        //             </div>` + this.body.innerHTML;
         this.updateScope();
         this.updateActive();
     }
@@ -122,6 +158,7 @@ class TodoBody {
     }
 
     updateChecked({ elem, id }) {
+        elem.checked ? (elem.className = "checked") : (elem.className = "");
         this.todosList.get(id).done = elem.checked;
         this.updateLocalStorage({ type: "update", id });
         this.updateActive();
@@ -144,25 +181,24 @@ class TodoBody {
     }
 
     updateLocalStorage({ type, id }) {
-        const LS = localStorage.myMap
-            ? new Map(JSON.parse(localStorage.myMap))
-            : new Map();
         switch (type) {
             case "delete":
-                LS.delete(id);
-                console.log(LS);
+                this.ls.delete(id);
+                console.log(this.ls);
                 console.log(this.todosList);
                 break;
             case "update":
-                LS.set(id, this.todosList.get(id));
-                console.log(LS);
+                if (this.todosList.get(id).text !== "") {
+                    this.ls.set(id, this.todosList.get(id));
+                }
+                console.log(this.ls);
                 console.log(this.todosList);
                 break;
 
             default:
                 break;
         }
-        localStorage.myMap = JSON.stringify(Array.from(LS));
+        localStorage.setItem("myToDos", JSON.stringify(Array.from(this.ls)));
     }
 
     onClick(event) {
@@ -174,4 +210,7 @@ class TodoBody {
     }
 }
 
-new TodoBody(TODOBODY).toDoInit();
+window.addEventListener("load", function () {
+    const TODOBODY = document.querySelector(".to-do-list-content-body");
+    new TodoBody(TODOBODY).toDoInit();
+});
