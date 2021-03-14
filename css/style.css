@@ -1,4 +1,3 @@
-
 body {
     font-style: normal;
     font-weight: 400;
@@ -35,7 +34,6 @@ h1 {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    align-items: flex-start;
     list-style-type: none;
     padding: 0 50px;
     margin: 40px 0;
@@ -43,6 +41,7 @@ h1 {
 
 .to-do-list-info div {
     display: flex;
+    width: 100%;
     flex-direction: column;
     font-size: 12px;
     line-height: 16px;
@@ -98,12 +97,12 @@ h1 {
     left: 50%;
     top: 0;
     transform: translate(-50%, -50%);
-    background-image: url('../svg/plus.svg');
+    background-image: url("../svg/plus.svg");
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
 }
- 
+
 .to-do-list-content-body {
     display: flex;
     width: 100%;
@@ -112,16 +111,25 @@ h1 {
     margin: 25px 0;
 }
 
-.to-do-list-content-item{
+.to-do-list-content-item {
     display: flex;
     flex-direction: column;
     width: 60%;
-    padding: 10px;
-    border-bottom: 1px solid #C7C7C7;
+    padding: 10px 0;
+    border-bottom: 1px solid #c7c7c7;
     cursor: pointer;
 }
 
-.to-do-list-task-header{
+.to-do-list-content-item:hover {
+    border-bottom: 1px solid #889dea;
+}
+
+.to-do-list-content-item:hover [data-action="updateTodoOn"] {
+    filter: invert(57%) sepia(71%) saturate(554%) hue-rotate(195deg)
+        brightness(101%) contrast(83%);
+}
+
+.to-do-list-task-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -134,7 +142,7 @@ input[type="checkbox"] + time::before {
     vertical-align: middle;
     font-size: 12px;
     line-height: 16px;
-    color: #889DEA;
+    color: #889dea;
 }
 
 input[type="checkbox"] {
@@ -148,7 +156,7 @@ input[type="checkbox"] + time::before {
     width: 18px;
     height: 18px;
     margin: 0 4px 0 0;
-    border: solid 1px #889DEA;
+    border: solid 1px #889dea;
     line-height: 14px;
     text-align: center;
     background: #ffffff;
@@ -157,10 +165,14 @@ input[type="checkbox"] + time::before {
     border-radius: 2px;
 }
 
+input[type="checkbox"]:checked {
+    text-decoration: line-through;
+}
+
 input[type="checkbox"]:checked + time::before {
     content: "";
-    background-color: #889DEA;
-    background-image: url('../svg/done.svg');
+    background-color: #889dea;
+    background-image: url("../svg/done.svg");
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
@@ -180,33 +192,30 @@ input[type="checkbox"]:checked + time::before {
 }
 
 [data-action="updateTodoOff"] {
-  background-image: url('../svg/done.svg');
-  filter: invert(57%) sepia(71%) saturate(554%) hue-rotate(195deg) brightness(101%) contrast(83%);
+    background-image: url("../svg/done.svg");
+    filter: invert(57%) sepia(71%) saturate(554%) hue-rotate(195deg)
+        brightness(101%) contrast(83%);
 }
 
 [data-action="updateTodoOn"] {
-  background-image: url('../svg/pencil.svg');
-}
-
-[data-action="updateTodoOn"]:hover {
-filter: invert(57%) sepia(71%) saturate(554%) hue-rotate(195deg) brightness(101%) contrast(83%);
+    background-image: url("../svg/pencil.svg");
 }
 
 [data-action="deleteTodo"] {
-  background-image: url('../svg/delete.svg');
+    background-image: url("../svg/delete.svg");
 }
 
 [data-ph="Enter your task"] {
     width: 100%;
-    outline:none;
-    border: none;
+    outline: none;
+    word-break: break-all;
     margin: 10px 0;
     padding: 0 10px;
-    color: #3F3F3F;
+    color: #3f3f3f;
 }
 
-[contentEditable=false]:empty:not(:focus):before{
-    content:attr(data-ph);
+[contentEditable="false"]:empty:not(:focus):before {
+    content: attr(data-ph);
     color: #797979;
 }
 
@@ -231,13 +240,13 @@ filter: invert(57%) sepia(71%) saturate(554%) hue-rotate(195deg) brightness(101%
     margin-right: 10px;
     width: 15px;
     height: 15px;
-    background-image: url('../svg/plus.svg');
+    background-image: url("../svg/plus.svg");
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
 }
-.disabled{
-  pointer-events: none;
+.disabled {
+    pointer-events: none;
 }
 
 #footer {
