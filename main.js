@@ -4,8 +4,7 @@ class TodoBody {
     constructor(body) {
         this.body = body
         body.onclick = this.onClick.bind( this )
-        this.ls = localStorage.myMap?JSON.parse(localStorage.myMap):null
-        this.todosList = this.ls ? new Map(this.ls): new Map()
+        this.todosList = localStorage.myMap?new Map(JSON.parse(localStorage.myMap)): new Map()
     }
 
     textDate ( date ) {
@@ -30,8 +29,8 @@ class TodoBody {
     }
 
     createTodo ( {id = this.createId().toString(), text = "", done = false} ) {
-        this.todosList.set( id, { text: text, done: done } )
-        if(this.ls !== this.todosList) localStorage.myMap = JSON.stringify(Array.from(this.todosList))
+        this.todosList.set( id, { text, done } )
+        this.updateLocalStorage()
         this.body.innerHTML =
             `<div class="to-do-list-content-item" id=${id}>
                         <div class="to-do-list-task-header">
@@ -62,6 +61,7 @@ class TodoBody {
         const todoElem = document.getElementById(id)
         todoElem.remove();
         this.todosList.delete( id );
+        this.updateLocalStorage()
         this.updateScope();
         this.updateActive();
         this.updateSuccessful();
@@ -78,7 +78,7 @@ class TodoBody {
         const todoElem = document.getElementById( id ).querySelector( '[data-ph="Enter your task"]' )
         elem.dataset.action = "updateTodoOn"
         this.todosList.get(id).text= todoElem.innerText
-        console.log(this.todosList);
+        this.updateLocalStorage()
         todoElem.setAttribute( 'contentEditable', 'false' )
     }
 
@@ -111,13 +111,17 @@ class TodoBody {
 
     toDoInit () {
         if ( this.todosList.size !== 0 ) {
-            for (let todo of this.todosList) { 
-               this.createTodo({id:todo[0],text: todo[0].text, done: todo[0].done}) 
+            for ( let todo of this.todosList ) {
+               this.createTodo({id:todo[0],text: todo[1].text, done: todo[1].done}) 
             }
         }
         this.updateActive();
         this.updateScope();
         this.updateSuccessful();
+    }
+
+    updateLocalStorage () {
+       localStorage.myMap = JSON.stringify(Array.from(this.todosList)) 
     }
     
     onClick ( event ) { 
