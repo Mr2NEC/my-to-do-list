@@ -33,7 +33,6 @@ class TodoBody {
 
     createTodo({ id = this.createId().toString(), text = "", done = false }) {
         this.todosList.set(id, { text, done });
-        this.updateLocalStorage();
         this.body.innerHTML =
             `<div class="to-do-list-content-item" id=${id}>
                         <div class="to-do-list-task-header">
@@ -66,7 +65,7 @@ class TodoBody {
         const todoElem = document.getElementById(id);
         todoElem.remove();
         this.todosList.delete(id);
-        this.updateLocalStorage();
+        this.updateLocalStorage({ type: "delete", id });
         this.updateScope();
         this.updateActive();
         this.updateSuccessful();
@@ -75,13 +74,7 @@ class TodoBody {
     updateTodoOn({ elem, id }) {
         const todoElem = document
             .getElementById(id)
-            .querySelector('[data-ph="Enter your task"]');
-        // this.body
-        //     .querySelectorAll(".to-do-list-content-item")
-        //     .forEach(function (contentItem) {
-        //         if (contentItem.id !== id)
-        //             contentItem.classList.add("disabled");
-        //     });
+            .querySelector("[contentEditable]");
         elem.dataset.action = "updateTodoOff";
         todoElem.setAttribute("contentEditable", "true");
         todoElem.focus();
@@ -90,14 +83,13 @@ class TodoBody {
     updateTodoOff({ elem, id }) {
         const todoElem = document
             .getElementById(id)
-            .querySelector('[data-ph="Enter your task"]');
-        // this.body.querySelectorAll(".disabled").forEach(function (contentItem) {
-        //     contentItem.classList.remove("disabled");
-        // });
-        elem.dataset.action = "updateTodoOn";
-        this.todosList.get(id).text = todoElem.innerText;
-        this.updateLocalStorage();
-        todoElem.setAttribute("contentEditable", "false");
+            .querySelector("[contentEditable]");
+        if (todoElem.innerText !== "") {
+            elem.dataset.action = "updateTodoOn";
+            this.todosList.get(id).text = todoElem.innerText;
+            this.updateLocalStorage({ type: "update", id });
+            todoElem.setAttribute("contentEditable", "false");
+        }
     }
 
     updateScope() {
@@ -130,10 +122,8 @@ class TodoBody {
     }
 
     updateChecked({ elem, id }) {
-        console.log(elem.checked);
         this.todosList.get(id).done = elem.checked;
-        console.log(this.todosList);
-        this.updateLocalStorage();
+        this.updateLocalStorage({ type: "update", id });
         this.updateActive();
         this.updateSuccessful();
     }
@@ -153,8 +143,26 @@ class TodoBody {
         this.updateSuccessful();
     }
 
-    updateLocalStorage() {
-        localStorage.myMap = JSON.stringify(Array.from(this.todosList));
+    updateLocalStorage({ type, id }) {
+        const LS = localStorage.myMap
+            ? new Map(JSON.parse(localStorage.myMap))
+            : new Map();
+        switch (type) {
+            case "delete":
+                LS.delete(id);
+                console.log(LS);
+                console.log(this.todosList);
+                break;
+            case "update":
+                LS.set(id, this.todosList.get(id));
+                console.log(LS);
+                console.log(this.todosList);
+                break;
+
+            default:
+                break;
+        }
+        localStorage.myMap = JSON.stringify(Array.from(LS));
     }
 
     onClick(event) {
