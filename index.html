@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="css/normalize.css" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
         <link
             href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap"
             rel="stylesheet"
@@ -37,22 +37,26 @@
                 </div>
                 <div class="to-do-list-content-body">
                     <template id="tmpl">
-                        <div class="to-do-list-content-item" >
-                        <div class="to-do-list-task-header">
-                            <label
-                                ><input type="checkbox" data-action="updateChecked" /><time
-                                    ></time
-                                ></label
-                            >
-                            <div class="to-do-list-task-svg">
-                                <span
-                                    data-action="updateTodoOn"
-                                ></span>
-                                <span  data-action="deleteTodo"
-                                ></span>
+                        <div class="to-do-list-content-item">
+                            <div class="to-do-list-task-header">
+                                <label
+                                    ><input
+                                        type="checkbox"
+                                        data-action="updateChecked"
+                                    /><time datetime="1970-01-01"
+                                        >01 Jan 1970</time
+                                    ></label
+                                >
+                                <div class="to-do-list-task-svg">
+                                    <span data-action="updateTodoOn"></span>
+                                    <span data-action="deleteTodo"></span>
+                                </div>
                             </div>
+                            <div
+                                contenteditable="false"
+                                data-ph="Please enter task description"
+                            ></div>
                         </div>
-                            <div  contentEditable=false data-ph="Please enter task description"></div>
                     </template>
                     <div data-action="createTodo">Create new task</div>
                 </div>

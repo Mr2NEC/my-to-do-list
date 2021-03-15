@@ -183,15 +183,11 @@ class TodoBody {
         switch (type) {
             case "delete":
                 this.ls.delete(id);
-                console.log(this.ls);
-                console.log(this.todosList);
                 break;
             case "update":
                 if (this.todosList.get(id).text !== "") {
                     this.ls.set(id, this.todosList.get(id));
                 }
-                console.log(this.ls);
-                console.log(this.todosList);
                 break;
 
             default:
