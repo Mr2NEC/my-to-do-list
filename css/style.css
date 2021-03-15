@@ -1,4 +1,9 @@
 body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    width: 100%;
     font-style: normal;
     font-weight: 400;
     font-size: 14px;
@@ -9,8 +14,12 @@ body {
 
 #wrapper {
     width: 100%;
+    max-width: 1980px;
+    min-height: 100vh;
     overflow: hidden;
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 #header {
@@ -35,7 +44,7 @@ h1 {
     flex-direction: row;
     justify-content: space-between;
     list-style-type: none;
-    padding: 0 50px;
+    padding: 0 10px;
     margin: 40px 0;
 }
 
@@ -57,9 +66,11 @@ h1 {
 
 #main {
     width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
+    flex: 1 0 auto;
 }
 
 .to-do-list-decor {
@@ -165,8 +176,9 @@ input[type="checkbox"] + time::before {
     border-radius: 2px;
 }
 
-input[type="checkbox"]:checked {
+div .checked {
     text-decoration: line-through;
+    color: #bbbbbb;
 }
 
 input[type="checkbox"]:checked + time::before {
@@ -205,18 +217,17 @@ input[type="checkbox"]:checked + time::before {
     background-image: url("../svg/delete.svg");
 }
 
-[data-ph="Enter your task"] {
+[data-ph] {
     width: 100%;
     outline: none;
     word-break: break-all;
-    margin: 10px 0;
-    padding: 0 10px;
+    padding: 0 18px;
     color: #3f3f3f;
 }
 
-[contentEditable="false"]:empty:not(:focus):before {
+[contentEditable]:empty:not(:focus):before {
     content: attr(data-ph);
-    color: #797979;
+    color: #bbbbbb;
 }
 
 [data-action="createTodo"] {
@@ -232,7 +243,7 @@ input[type="checkbox"]:checked + time::before {
     font-size: 16px;
     line-height: 24px;
     border-radius: 11px;
-    margin: 10px 0;
+    margin: 25px 0;
 }
 
 [data-action="createTodo"]::before {
@@ -252,4 +263,5 @@ input[type="checkbox"]:checked + time::before {
 #footer {
     display: flex;
     justify-content: center;
+    flex: 0 0 auto;
 }

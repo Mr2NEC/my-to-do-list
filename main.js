@@ -8,6 +8,35 @@ class TodoBody {
         this.todosList = this.ls.size !== 0 ? new Map(this.ls) : new Map();
     }
 
+    updateScope() {
+        const scope = document.querySelector(".to-do-list-info-scope");
+        scope.innerText = this.todosList.size;
+    }
+
+    updateActive() {
+        const active = document.querySelector(".to-do-list-info-active");
+        let count = 0;
+        for (let todo of this.todosList.values()) {
+            if (!todo.done) {
+                count++;
+            }
+        }
+        active.innerText = count;
+    }
+
+    updateSuccessful() {
+        const successful = document.querySelector(
+            ".to-do-list-info-successful"
+        );
+        let count = 0;
+        for (let todo of this.todosList.values()) {
+            if (todo.done) {
+                count++;
+            }
+        }
+        successful.innerText = count;
+    }
+
     textDate(date) {
         return date
             .toLocaleDateString("en-GB", {
@@ -41,7 +70,7 @@ class TodoBody {
         return date.toISOString().substring(0, 10);
     }
 
-    createTemplate({ id, text, done, now }) {
+    templateTodo({ id, text, done, now }) {
         const tmpl = document.querySelector("#tmpl");
         const clon = tmpl.content.cloneNode(true);
 
@@ -49,20 +78,22 @@ class TodoBody {
 
         const checkbox = clon.querySelector("[data-action=updateChecked]");
         checkbox.dataset.id = id;
-        if (done) {
-            checkbox.className = "checked";
-        }
+        checkbox.checked = done;
 
         const time = clon.querySelector("time");
         time.setAttribute("datetime", this.getFormattedDate(now));
         time.textContent = this.textDate(now);
 
-        clon.querySelector("[data-action=updateTodoOn]").dataset.id = id;
+        const updateTodoOn = clon.querySelector("[data-action=updateTodoOn]");
+        updateTodoOn.dataset.id = id;
+        if (done) updateTodoOn.classList.add("disabled");
+
         clon.querySelector("[data-action=deleteTodo]").dataset.id = id;
 
         const contentEditableDiv = clon.querySelector("[contentEditable]");
         contentEditableDiv.dataset.id = id;
         contentEditableDiv.textContent = text;
+        if (done) contentEditableDiv.classList.add("checked");
 
         this.body.insertBefore(clon, this.body.firstElementChild);
     }
@@ -70,29 +101,7 @@ class TodoBody {
     createTodo({ id = this.createId(), text = "", done = false }) {
         const now = new Date();
         this.todosList.set(id, { text, done });
-        this.createTemplate({ id, text, done, now });
-        // this.body.innerHTML =
-        //     `<div class="to-do-list-content-item" id=${id}>
-        //                 <div class="to-do-list-task-header">
-        //                     <label
-        //                         ><input type="checkbox" data-id=${id} data-action="updateChecked" ${
-        //         done ? "checked" : ""
-        //     } /><time
-        //                             datetime="${this.getFormattedDate(now)}"
-        //                             >${this.textDate(now)}</time
-        //                         ></label
-        //                     >
-        //                     <div class="to-do-list-task-svg">
-        //                         <span
-        //                             data-id=${id}
-        //                             data-action="updateTodoOn"
-        //                         ></span>
-        //                         <span data-id=${id} data-action="deleteTodo"
-        //                         ></span>
-        //                     </div>
-        //                 </div>
-        //                     <div data-id=${id} contentEditable=false data-ph="Enter your task">${text}</div>
-        //             </div>` + this.body.innerHTML;
+        this.templateTodo({ id, text, done, now });
         this.updateScope();
         this.updateActive();
     }
@@ -111,6 +120,9 @@ class TodoBody {
         const todoElem = document
             .getElementById(id)
             .querySelector("[contentEditable]");
+        document
+            .getElementById(id)
+            .querySelector("[data-action=updateChecked]").disabled = true;
         elem.dataset.action = "updateTodoOff";
         todoElem.setAttribute("contentEditable", "true");
         todoElem.focus();
@@ -121,6 +133,9 @@ class TodoBody {
             .getElementById(id)
             .querySelector("[contentEditable]");
         if (todoElem.innerText !== "") {
+            document
+                .getElementById(id)
+                .querySelector("[data-action=updateChecked]").disabled = false;
             elem.dataset.action = "updateTodoOn";
             this.todosList.get(id).text = todoElem.innerText;
             this.updateLocalStorage({ type: "update", id });
@@ -128,37 +143,21 @@ class TodoBody {
         }
     }
 
-    updateScope() {
-        const scope = document.querySelector(".to-do-list-info-scope");
-        scope.innerText = this.todosList.size;
-    }
-
-    updateActive() {
-        const active = document.querySelector(".to-do-list-info-active");
-        let count = 0;
-        for (let todo of this.todosList.values()) {
-            if (!todo.done) {
-                count++;
-            }
-        }
-        active.innerText = count;
-    }
-
-    updateSuccessful() {
-        const successful = document.querySelector(
-            ".to-do-list-info-successful"
-        );
-        let count = 0;
-        for (let todo of this.todosList.values()) {
-            if (todo.done) {
-                count++;
-            }
-        }
-        successful.innerText = count;
-    }
-
     updateChecked({ elem, id }) {
-        elem.checked ? (elem.className = "checked") : (elem.className = "");
+        const todoElem = document
+            .getElementById(id)
+            .querySelector("[contentEditable]");
+        elem.checked
+            ? todoElem.classList.add("checked")
+            : todoElem.classList.remove("checked");
+
+        const updateTodoOn = document
+            .getElementById(id)
+            .querySelector("[data-action=updateTodoOn]");
+        elem.checked
+            ? updateTodoOn.classList.add("disabled")
+            : updateTodoOn.classList.remove("disabled");
+
         this.todosList.get(id).done = elem.checked;
         this.updateLocalStorage({ type: "update", id });
         this.updateActive();
