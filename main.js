@@ -2,10 +2,8 @@ class TodoBody {
     constructor(body) {
         this.body = body;
         body.onclick = this.onClick.bind(this);
-        this.ls = localStorage.getItem("myToDos")
-            ? new Map(JSON.parse(localStorage.getItem("myToDos")))
-            : new Map();
-        this.todosList = this.ls.size !== 0 ? new Map(this.ls) : new Map();
+        this.ls = new Map(JSON.parse(localStorage.getItem("myToDos")) || []);
+        this.todosList = new Map(this.ls);
     }
 
     updateScope() {
@@ -133,6 +131,7 @@ class TodoBody {
             .getElementById(id)
             .querySelector("[contentEditable]");
         if (todoElem.innerText !== "") {
+            todoElem.removeAttribute("oninput");
             document
                 .getElementById(id)
                 .querySelector("[data-action=updateChecked]").disabled = false;
