@@ -68,7 +68,7 @@ class TodoBody {
         return date.toISOString().substring(0, 10);
     }
 
-    templateTodo({ id, text, done, now }) {
+    templateTodo({ id, text, done, date }) {
         const tmpl = document.querySelector("#tmpl");
         const clon = tmpl.content.cloneNode(true);
 
@@ -79,8 +79,8 @@ class TodoBody {
         checkbox.checked = done;
 
         const time = clon.querySelector("time");
-        time.setAttribute("datetime", this.getFormattedDate(now));
-        time.textContent = this.textDate(now);
+        time.setAttribute("datetime", this.getFormattedDate(date));
+        time.textContent = this.textDate(date);
 
         const updateTodoOn = clon.querySelector("[data-action=updateTodoOn]");
         updateTodoOn.dataset.id = id;
@@ -96,10 +96,9 @@ class TodoBody {
         this.body.insertBefore(clon, this.body.firstElementChild);
     }
 
-    createTodo({ id = this.createId(), text = "", done = false }) {
-        const now = new Date();
-        this.todosList.set(id, { text, done });
-        this.templateTodo({ id, text, done, now });
+    createTodo ( { id = this.createId(), text = "", done = false, date = new Date() } ) {
+        this.todosList.set(id, { text, done, date});
+        this.templateTodo( { id, text, done, date } );
         this.updateScope();
         this.updateActive();
     }
@@ -170,6 +169,7 @@ class TodoBody {
                     id: todo[0],
                     text: todo[1].text,
                     done: todo[1].done,
+                    date: new Date(todo[1].date),
                 });
             }
         }
@@ -178,7 +178,7 @@ class TodoBody {
         this.updateSuccessful();
     }
 
-    updateLocalStorage({ type, id }) {
+    updateLocalStorage ( { type, id } ) {
         switch (type) {
             case "delete":
                 this.ls.delete(id);
@@ -206,5 +206,5 @@ class TodoBody {
 
 window.addEventListener("load", function () {
     const TODOBODY = document.querySelector(".to-do-list-content-body");
-    new TodoBody(TODOBODY).toDoInit();
+    new TodoBody( TODOBODY ).toDoInit();
 });
